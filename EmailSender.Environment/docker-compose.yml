@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  sql-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=messages
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+    container_name: emails-pg
+    hostname: emails-pg
+
+  rabbit:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"
+    hostname: emails-rmq
+    container_name: emails-rmq
