@@ -46,11 +46,12 @@ namespace EmailSender.Data
             }));
         }
 
-        private Task<int> Save(MessageEntity messageEntity, IDbConnection connection)
+        private async Task<int> Save(MessageEntity messageEntity, IDbConnection connection)
         {
-            return connection.ExecuteAsync($"insert into {Const.MessagesTable}" +
-                                           "(sender, destination, subject, text_body, html_body, status, message_stream, created)" +
-                                           "values(@from, @to, @subject, @textBody, @htmlBody, @status::MessageStatus, @messageStream, @created)", new
+            var ret = await connection.QuerySingleAsync<int>($"insert into {Const.MessagesTable}" +
+                                           "(sender, destination, subject, text_body, html_body, status, message_stream, created) " +
+                                           "values(@from, @to, @subject, @textBody, @htmlBody, @status::MessageStatus, @messageStream, @created) " +
+                                           "RETURNING id", new
                                            {
                                                from = messageEntity.From,
                                                to = messageEntity.To,
@@ -61,6 +62,8 @@ namespace EmailSender.Data
                                                messageStream = messageEntity.MessageStream,
                                                created = messageEntity.Created
                                            });
+
+            return ret;
         }
 
         private async Task<T> Execute<T>(Func<IDbConnection, Task<T>> action)

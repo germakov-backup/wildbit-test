@@ -11,10 +11,13 @@ namespace EmailSender.Services
     internal class EmailService : IEmailService
     {
         private readonly IMessagesTable _messagesTable;
+        private readonly IConnectionManager _connectionManager;
 
-        public EmailService(IMessagesTable messagesTable)
+        public EmailService(IMessagesTable messagesTable,
+            IConnectionManager connectionManager)
         {
             _messagesTable = messagesTable;
+            _connectionManager = connectionManager;
         }
 
         public async Task<MessageHandle> Send(Message message)
@@ -25,7 +28,7 @@ namespace EmailSender.Services
 
         public async Task<IEnumerable<MessageHandle>> Send(IEnumerable<Message> messages)
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            using var scope = await _connectionManager.BeginTransactionScope();
             var tasks = new List<Task<MessageHandle>>();
             foreach (var message in messages)
             {
@@ -35,7 +38,7 @@ namespace EmailSender.Services
             }
             var result = await Task.WhenAll(tasks);
 
-            scope.Complete();
+            scope.Commit();
             return result;
         }
 
