@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace EmailSender.Data
 {
-    public class ConnectionManager : IConnectionManager
+    public class ConnectionManager : IConnectionManager, ITransactionManager
     {
         private readonly string _connectionString;
         // todo - think through concurrency, now it's simplified
@@ -25,8 +25,7 @@ namespace EmailSender.Data
                 return _currentTransaction.Value.Transaction.Connection;
             }
 
-            var c = new NpgsqlConnection(_connectionString);
-            await c.OpenAsync();
+            var c = await OpenConnection();
             return c;
         }
 
@@ -37,12 +36,18 @@ namespace EmailSender.Data
                 return _currentTransaction.Value;
             }
 
-            var c = new NpgsqlConnection(_connectionString);
-            await c.OpenAsync();
+            var c = await OpenConnection();
             var tx = await c.BeginTransactionAsync(level);
             _currentTransaction.Value = new SimpleTransactionScope(tx);
 
             return _currentTransaction.Value;
+        }
+
+        private async Task<NpgsqlConnection> OpenConnection()
+        {
+            var c = new NpgsqlConnection(_connectionString);
+            await c.OpenAsync();
+            return c;
         }
     }
 }

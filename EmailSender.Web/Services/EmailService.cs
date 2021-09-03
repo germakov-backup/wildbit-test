@@ -12,13 +12,13 @@ namespace EmailSender.Services
     {
         private const string SuccessMessage = "OK";
         private readonly IMessagesTable _messagesTable;
-        private readonly IConnectionManager _connectionManager;
+        private readonly ITransactionManager _transactionManager;
 
         public EmailService(IMessagesTable messagesTable,
-            IConnectionManager connectionManager)
+            ITransactionManager transactionManager)
         {
             _messagesTable = messagesTable;
-            _connectionManager = connectionManager;
+            _transactionManager = transactionManager;
         }
 
         public async Task<MessageResponse> Send(Message message)
@@ -29,7 +29,7 @@ namespace EmailSender.Services
 
         public async Task<IEnumerable<MessageResponse>> Send(IEnumerable<Message> messages)
         {
-            using var scope = await _connectionManager.BeginTransactionScope();
+            using var scope = await _transactionManager.BeginTransactionScope();
             var tasks = new List<Task<MessageResponse>>();
             foreach (var message in messages)
             {

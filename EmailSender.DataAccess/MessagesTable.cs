@@ -20,7 +20,21 @@ namespace EmailSender.Data
 
         public Task<MessageEntity> GetMessage(int id)
         {
+            // not enumerating fields explicitly just for demo application purpose
             return Execute(c => c.QuerySingleAsync<MessageEntity>($"select * from {Const.MessagesTable} where id = @id", new { id = id }));
+        }
+
+        public async Task<IList<MessageEntity>> QueryMessages(MessageStatus status, int maxCount)
+        {
+            var messages = await Execute(c => c.QueryAsync<MessageEntity>($"select * from {Const.MessagesTable} where status = @status::MessageStatus " +
+                                                                          $"limit @limit",
+                new
+                {
+                    status = status.ToString(),
+                    limit = maxCount
+                }));
+
+            return messages.ToList();
         }
 
         public Task<int> Save(MessageEntity messageEntity)
@@ -39,10 +53,10 @@ namespace EmailSender.Data
 
         public Task UpdateStatus(int id, MessageStatus status)
         {
-            return Execute(c => c.ExecuteAsync($"Update {Const.MessagesTable} set Status = ?status where id = @id", new
+            return Execute(c => c.ExecuteAsync($"Update {Const.MessagesTable} set status = @status::MessageStatus where id = @id", new
             {
                 id = id,
-                status = status
+                status = status.ToString()
             }));
         }
 

@@ -9,7 +9,11 @@ namespace EmailSender.Data
     {
         public static void AddDataAccess(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IConnectionManager, ConnectionManager>();
+            serviceCollection.AddScoped<ConnectionManager>();
+
+            serviceCollection.AddScoped<IConnectionManager>(s => s.GetRequiredService<ConnectionManager>());
+            serviceCollection.AddScoped<ITransactionManager>(s => s.GetRequiredService<ConnectionManager>());
+
             serviceCollection.AddScoped<IMessagesTable, MessagesTable>();
 
             FluentMapper.Initialize(config => config.AddMap(new MessageMappings()));

@@ -21,5 +21,8 @@ namespace EmailSender.Abstractions.DataAccess.Models
         public MessageStatus Status { get; set; }
 
         public DateTime? Created { get; set; }
+
+        // not implementing now, but since we're using queue system, might be helpful to track broken messages and remove from pipeline
+        public int RetryCount { get; set; }
     }
 }

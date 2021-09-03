@@ -8,6 +8,8 @@ namespace EmailSender.Abstractions.DataAccess
     {
         Task<MessageEntity> GetMessage(int id);
 
+        Task<IList<MessageEntity>> QueryMessages(MessageStatus status, int maxCount);
+
         Task<int> Save(MessageEntity messageEntity);
 
         Task<IEnumerable<int>> Save(IEnumerable<MessageEntity> message);

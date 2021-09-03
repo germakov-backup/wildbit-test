@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using EmailSender.Abstractions.DataAccess;
 
 namespace EmailSender.Data
@@ -28,9 +29,15 @@ namespace EmailSender.Data
             Transaction.Rollback();
         }
 
+        ~SimpleTransactionScope()
+        {
+            Dispose(false);
+        }
+
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool isDisposing)
@@ -39,7 +46,10 @@ namespace EmailSender.Data
             {
                 if (isDisposing)
                 {
+                    var connection = Transaction.Connection;
                     Transaction.Dispose();
+                    connection?.Dispose();
+
                 }
 
                 IsDisposed = true;

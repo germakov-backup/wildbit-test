@@ -1,3 +1,4 @@
+using EmailSender.Config;
 using EmailSender.Data;
 using EmailSender.Services;
 using Microsoft.AspNetCore.Builder;
@@ -18,10 +19,12 @@ namespace EmailSender
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDataAccess();
+            services.Configure<TasksPollTriggerOptions>(Configuration.GetSection(TasksPollTriggerOptions.Key));
+
+            services.AddHostedService<PipelineTriggerService>();
             services.AddControllers(c =>
             {
                 c.Filters.Add(typeof(MailSendApiExceptionHandlerFilter), -9999);
