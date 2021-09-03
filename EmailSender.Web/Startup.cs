@@ -1,17 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EmailSender.Data;
 using EmailSender.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace EmailSender
@@ -29,7 +22,10 @@ namespace EmailSender
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDataAccess();
-            services.AddControllers();
+            services.AddControllers(c =>
+            {
+                c.Filters.Add(typeof(MailSendApiExceptionHandlerFilter), -9999);
+            });
 
             services.AddScoped<IEmailService, EmailService>();
 

@@ -8,10 +8,9 @@ namespace EmailSender.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [TypeFilter(typeof(MailSendApiExceptionHandlerFilter))]
     public class EmailController : ControllerBase
     {
-        private const string SuccessMessage = "OK";
-
         private readonly IEmailService _emailService;
 
         public EmailController(IEmailService emailService)

@@ -6,8 +6,8 @@ namespace EmailSender.Services
 {
     public interface IEmailService
     {
-        public Task<MessageHandle> Send(Message message);
+        public Task<MessageResponse> Send(Message message);
 
-        public Task<IEnumerable<MessageHandle>> Send(IEnumerable<Message> messages);
+        public Task<IEnumerable<MessageResponse>> Send(IEnumerable<Message> messages);
     }
 }

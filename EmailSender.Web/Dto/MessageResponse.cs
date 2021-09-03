@@ -2,6 +2,7 @@
 {
     public class MessageResponse : MessageHandle
     {
+        public MessageResponse(int errorCode, string message): this(null, errorCode, message) {}
         public MessageResponse(MessageHandle handle, int errorCode, string message): base(handle)
         {
             ErrorCode = errorCode;

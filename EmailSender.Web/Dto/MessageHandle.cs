@@ -4,11 +4,11 @@ namespace EmailSender.Dto
 {
     public class MessageHandle
     {
-        public MessageHandle(MessageHandle handle): this(handle.MessageID, handle.To, handle.SubmittedAt)
+        public MessageHandle(MessageHandle handle): this(handle?.MessageID, handle?.To, handle?.SubmittedAt)
         {
         }
 
-        public MessageHandle(string messageId, string to, DateTime submittedAt)
+        public MessageHandle(string messageId, string to, DateTime? submittedAt)
         {
             MessageID = messageId;
             To = to;
@@ -16,7 +16,7 @@ namespace EmailSender.Dto
         }
 
         public string To { get; set; }
-        public DateTime SubmittedAt { get; set; }
+        public DateTime? SubmittedAt { get; set; }
 
         public string MessageID { get; set; }
     }

@@ -10,6 +10,7 @@ namespace EmailSender.Data
     public class ConnectionManager : IConnectionManager
     {
         private readonly string _connectionString;
+        // todo - think through concurrency, now it's simplified
         private readonly AsyncLocal<SimpleTransactionScope> _currentTransaction = new();
 
         public ConnectionManager(IConfiguration configuration)

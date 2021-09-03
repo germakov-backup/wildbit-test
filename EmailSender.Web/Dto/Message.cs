@@ -4,7 +4,7 @@ namespace EmailSender.Dto
 {
     public class Message
     {
-        public int? Id { get; set; }
+        public string Id { get; set; }
 
         public string To { get; set; }
 
