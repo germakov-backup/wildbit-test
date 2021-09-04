@@ -7,5 +7,7 @@
         public int DelaySeconds { get; set; }
 
         public int BatchSize { get; set; }
+
+        public string PipelineInputChannelAddress { get; set; }
     }
 }

@@ -1,17 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>EmailSender</RootNamespace>
+        <UserSecretsId>dotnet-EmailSender.PriorityMailSender.Host-10A44DD7-6DC9-455C-8798-FD1069A6A27D</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\EmailSender.DataAccess\EmailSender.DataAccess.csproj" />
       <ProjectReference Include="..\EmailSender.PipelineHandlers\EmailSender.PipelineHandlers.csproj" />
     </ItemGroup>
-
 </Project>

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EmailSender.Abstractions.DataAccess;
 using EmailSender.Abstractions.DataAccess.Models;
+using EmailSender.Abstractions.Handlers;
 using EmailSender.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,7 @@ namespace EmailSender.Services
     public class PipelineTriggerService : BackgroundService
     {
         private readonly IOptions<TasksPollTriggerOptions> _options;
+        private readonly IOutputChannelGateway _pipelineInputChannel;
         private readonly IServiceScope _serviceScope;
         private readonly ILogger<PipelineTriggerService> _logger;
         private readonly IMessagesTable _messagesTable;
@@ -21,9 +23,11 @@ namespace EmailSender.Services
 
         public PipelineTriggerService(IOptions<TasksPollTriggerOptions> options,
             IServiceProvider services,
+            IOutputChannelGateway pipelineInputChannel,
             ILogger<PipelineTriggerService> logger)
         {
             _options = options;
+            _pipelineInputChannel = pipelineInputChannel;
             _serviceScope = services.CreateScope();
             _messagesTable = _serviceScope.ServiceProvider.GetRequiredService<IMessagesTable>();
             _transactionManager = _serviceScope.ServiceProvider.GetRequiredService<ITransactionManager>();
@@ -34,7 +38,7 @@ namespace EmailSender.Services
         {
             _logger.LogDebug("PipelineTriggerService starting.");
 
-            stoppingToken.Register(() => _logger.LogDebug($" PipelineTriggerService is stopping."));
+            stoppingToken.Register(() => _logger.LogDebug($"PipelineTriggerService is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -71,6 +75,15 @@ namespace EmailSender.Services
             using var scope = await _transactionManager.BeginTransactionScope();
             foreach (var message in messages)
             {
+                var claimCheck = new MessageClaimCheck()
+                {
+                    Id = message.Id.Value,
+                    From = message.From,
+                    To = message.To,
+                    MessageStream = message.MessageStream
+                };
+
+                await _pipelineInputChannel.Send(_options.Value.PipelineInputChannelAddress, claimCheck);
                 await _messagesTable.UpdateStatus(message.Id.Value, MessageStatus.Processing);
             }
 

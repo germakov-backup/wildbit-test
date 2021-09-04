@@ -4,7 +4,6 @@
     {
         Pending,
         Processing,
-        Sending,
         Sent,
         Failed,
         Bounced

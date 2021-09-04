@@ -1,4 +1,4 @@
-CREATE TYPE MessageStatus AS ENUM ('Pending', 'Processing', 'Sending', 'Sent', 'Failed', 'Bounced');
+CREATE TYPE MessageStatus AS ENUM ('Pending', 'Processing', 'Sent', 'Failed', 'Bounced');
 
 CREATE TABLE Messages (
     id SERIAL primary key not null,
